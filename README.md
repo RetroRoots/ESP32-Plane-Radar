@@ -4,6 +4,15 @@
 
 Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 240×240). Shows a circular **ADS-B radar** around your configured location, with **WiFiManager** for first-time setup.
 
+## What's different in this fork
+
+Changes from the upstream project:
+
+- **UK postcode → coordinates** — enter a UK postcode in the web settings and it's geocoded to lat/lon via [postcodes.io](https://postcodes.io) (no API key)
+- **Web settings page** — adjust location, range, miles/km, and **top bearing** (display rotation) from a browser at `plane-radar.local`, no reflash needed
+- **UK airport overlays** — nearby UK airports drawn on the radar grid
+- **Slimmed firmware** — removed the bundled large-airports dataset and runway-overlay feature
+
 ## What it does
 
 1. **Wi‑Fi setup** (if needed) — captive portal on AP **`PlaneRadar-Setup`**
