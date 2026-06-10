@@ -9,6 +9,8 @@
 #include "hardware/display.h"
 #include "services/adsb_client.h"
 #include "services/radar_location.h"
+#include "services/radar_rotation.h"
+#include "services/web_settings.h"
 #include "services/wifi_setup.h"
 #include "ui/radar_display.h"
 #include "ui/radar_range.h"
@@ -20,6 +22,27 @@ bool g_radar_visible = false;
 unsigned long g_wifi_down_since = 0;
 unsigned long g_last_reconnect_ms = 0;
 unsigned long g_last_adsb_fetch_ms = 0;
+
+// --- Touch & IP Display State ---
+constexpr gpio_num_t kTouchIntPin = GPIO_NUM_5;
+constexpr gpio_num_t kTouchRstPin = GPIO_NUM_13;
+volatile bool s_touch_tap_pending = false;
+unsigned long g_ip_display_until_ms = 0;
+String g_local_ip_str;
+
+void IRAM_ATTR onTouchIsr() {
+  s_touch_tap_pending = true;
+}
+
+void touchInit() {
+  pinMode(kTouchRstPin, OUTPUT);
+  digitalWrite(kTouchRstPin, LOW);
+  delay(10);
+  digitalWrite(kTouchRstPin, HIGH);
+  delay(50);
+  pinMode(kTouchIntPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(kTouchIntPin), onTouchIsr, FALLING);
+}
 
 void showRadarIfConnected() {
   if (WiFi.status() != WL_CONNECTED) {
@@ -68,23 +91,51 @@ void setup() {
   Serial.println();
   Serial.println("Plane Radar");
 
+  // Enable backlight for Waveshare ESP32-S3 Touch LCD 1.28
+  pinMode(config::kDisplayPinBl, OUTPUT);
+  digitalWrite(config::kDisplayPinBl, HIGH);
+
   bootButtonInit();
   displayInit();
+  touchInit();
   if (wifiShowsSetupScreenOnBoot()) {
     statusScreenPortal();
   }
   services::location::init();
+  services::radar_rotation::init();
   ui::radar::rangeInit();
-  services::adsb::setPollFn(wifiLoop);
 
   if (wifiSetupConnect()) {
+    services::web_settings::init();
     showRadarIfConnected();
   }
 }
 
 void loop() {
+  if (s_touch_tap_pending) {
+    s_touch_tap_pending = false;
+    // Only trigger if radar is running and IP isn't already showing
+    if (WiFi.status() == WL_CONNECTED && g_ip_display_until_ms == 0) {
+      g_local_ip_str = "IP: " + WiFi.localIP().toString();
+      g_ip_display_until_ms = millis() + 5000;
+      g_radar_visible = false;
+      statusScreenConnectingBegin(g_local_ip_str.c_str());
+    }
+  }
+
+  if (g_ip_display_until_ms > 0) {
+    if (millis() >= g_ip_display_until_ms) {
+      g_ip_display_until_ms = 0;
+      if (WiFi.status() == WL_CONNECTED) {
+        showRadarIfConnected(); // 5 seconds passed, redraw radar
+      }
+    }
+    services::web_settings::handle(); // Keep background web server alive
+    delay(10);
+    return; // Suspend normal radar UI updates
+  }
+
   handleBootButton();
-  wifiLoop();
 
   if (WiFi.status() != WL_CONNECTED) {
     if (g_radar_visible) {
@@ -107,6 +158,7 @@ void loop() {
     }
   } else {
     g_wifi_down_since = 0;
+    services::web_settings::handle();
     if (!g_radar_visible) {
       showRadarIfConnected();
     } else if (millis() - g_last_adsb_fetch_ms >= config::kAdsbFetchIntervalMs) {

@@ -4,7 +4,7 @@
 
 **3D printed case (STL + assembly):** [MakerWorld](https://makerworld.com/en/models/2872376-esp32-plane-radar-live-ads-b-on-a-round-display#profileId-3207083) · **Firmware:** [Releases](https://github.com/MatixYo/ESP32-Plane-Radar/releases)
 
-Firmware for an **ESP32-C3 Super Mini** and a **1.28″ round GC9A01** display (240×240). Shows a circular **ADS-B radar** around your configured location, with **WiFiManager** for first-time setup.
+Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 240×240). Shows a circular **ADS-B radar** around your configured location, with **WiFiManager** for first-time setup.
 
 ## What it does
 
@@ -13,7 +13,7 @@ Firmware for an **ESP32-C3 Super Mini** and a **1.28″ round GC9A01** display (
 
 After Wi‑Fi is saved, the device reconnects automatically; the radar runs in the main loop with periodic ADS-B updates (~5 s).
 
-## Controls (BOOT, GPIO 9, active LOW)
+## Controls (BOOT, GPIO 0, active LOW)
 
 | Action | Effect |
 |--------|--------|
@@ -24,18 +24,11 @@ During setup you can also hold BOOT at power-on to force a credential reset (sam
 
 ## Wi‑Fi setup portal
 
-**First-time setup** (no saved Wi‑Fi):
-
 1. Connect to **`PlaneRadar-Setup`**
 2. Open **`http://plane-radar.local`** (preferred) or **`http://192.168.4.1`** — both are shown on the yellow setup screen; captive portal may open automatically
 3. Set home Wi‑Fi, then save
 
-**Reconfigure anytime** (after the device is on your network):
-
-1. Open **`http://plane-radar.local`** or **`http://<device-ip>`** (e.g. from your router or serial log at boot)
-2. Change Wi‑Fi, location, units, or runway overlay; save
-
-The same portal runs on the setup AP and on the device’s LAN IP while connected to Wi‑Fi. mDNS hostname is `plane-radar` → **plane-radar.local** (`kPortalHostname` in `config.h`). Some clients resolve `.local` slowly; use the IP if needed.
+mDNS hostname is configured in `config.h` as `kPortalHostname` (`plane-radar` → **plane-radar.local** on the setup AP). Some phones resolve `.local` slowly; use the IP if needed.
 
 **Custom fields** (stored in NVS):
 
@@ -43,7 +36,6 @@ The same portal runs on the setup AP and on the device’s LAN IP while connecte
 |-------|---------|
 | **Latitude / Longitude** | Radar center and ADS-B query position (defaults in `config.h` until set) |
 | **Display distances in miles** | Ring scale label in **mi** instead of **km** (e.g. `6mi` vs `10km`) |
-| **Show airport runways** | Major-airport runway overlay on the radar (off to hide) |
 
 After a reset, the device reboots and shows the setup screen immediately (no “Connecting” loop on stale credentials).
 
@@ -67,12 +59,6 @@ Layout and colors: `include/ui/radar_theme.h`.
 | 25 km / 16 mi | ~33.3 km |
 
 Preset and miles/km choice persist across reboot (`planeradar` NVS namespace).
-
-### Runways
-
-- Major airports from OurAirports (`large_airport`); all open runway strips in range (helipads excluded)
-- Teal runway lines with one ICAO label per airport (e.g. `KJFK`); toggle in the Wi‑Fi setup portal
-- Update the embedded list: `python3 scripts/build_large_airports.py`
 
 ### Aircraft
 
@@ -113,13 +99,10 @@ include/
     lgfx_config.hpp
     display.h
     display_font.h
-  data/
-    large_airports.h
   ui/
     radar_theme.h
     radar_range.h
     radar_display.h
-    runway_overlay.h
     status_screens.h
   services/
     wifi_setup.h
@@ -127,12 +110,8 @@ include/
     adsb_client.h
 data/
   ui_font.vlw              — embedded smooth UI font (Noto Sans Bold)
-scripts/
-  build_large_airports.py
 src/
   main.cpp
-  data/
-    large_airports_data.cpp
   hardware/
   ui/
   services/
