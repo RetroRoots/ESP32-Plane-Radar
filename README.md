@@ -1,8 +1,6 @@
 # Plane Radar
 
-<img width="800" height="450" alt="plane-radar" src="https://github.com/user-attachments/assets/716d0992-dab8-47ba-8f1a-2aec7f607419" />
-
-**3D printed case (STL + assembly):** [MakerWorld](https://makerworld.com/en/models/2872376-esp32-plane-radar-live-ads-b-on-a-round-display#profileId-3207083) · **Firmware:** [Releases](https://github.com/MatixYo/ESP32-Plane-Radar/releases)
+**3D printed case (STL + assembly):** [MakerWorld]. **Firmware:** [Releases](https://github.com/MatixYo/ESP32-Plane-Radar/releases)
 
 Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 240×240). Shows a circular **ADS-B radar** around your configured location, with **WiFiManager** for first-time setup.
 
@@ -12,6 +10,13 @@ Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 24
 2. **Radar** — live aircraft from [adsb.fi](https://opendata.adsb.fi/) on a sonar-style grid
 
 After Wi‑Fi is saved, the device reconnects automatically; the radar runs in the main loop with periodic ADS-B updates (~5 s).
+
+## Assembly hardware
+
+To assemble the 3D printed case you'll need:
+
+- **4 × M1.6 × 10 mm** screws
+- **4 × M1.6** nuts
 
 ## Controls (BOOT, GPIO 0, active LOW)
 
