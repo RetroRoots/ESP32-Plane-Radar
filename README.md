@@ -1,6 +1,6 @@
 # Plane Radar
 
-**3D printed case (STL + assembly):** [MakerWorld]. **Firmware:** [Releases](https://github.com/MatixYo/ESP32-Plane-Radar/releases)
+**3D printed case (STL + assembly):** [MakerWorld](https://makerworld.com/en/models/2913572-esp32-s3-1-28-waveshare-plane-radar#profileId-3258909). **Firmware:** [Releases](https://github.com/theprintablewatch/ESP32-Plane-Radar/releases)
 
 Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 240×240). Shows a circular **ADS-B radar** around your configured location, with **WiFiManager** for first-time setup.
 
@@ -8,15 +8,15 @@ Firmware for the **Waveshare ESP32-S3 Touch LCD 1.28** (round GC9A01 display, 24
 
 Changes from the upstream project:
 
-- **UK postcode → coordinates** — enter a UK postcode in the web settings and it's geocoded to lat/lon via [postcodes.io](https://postcodes.io) (no API key)
-- **Web settings page** — adjust location, range, miles/km, and **top bearing** (display rotation) from a browser at `plane-radar.local`, no reflash needed
-- **UK airport overlays** — nearby UK airports drawn on the radar grid
-- **Slimmed firmware** — removed the bundled large-airports dataset and runway-overlay feature
+- **UK postcode → coordinates** - enter a UK postcode in the web settings and it's geocoded to lat/lon via [postcodes.io](https://postcodes.io) (no API key)
+- **Web settings page** - adjust location, range, miles/km, and **top bearing** (display rotation) from a browser at `plane-radar.local`, no reflash needed
+- **UK airport overlays** - nearby UK airports drawn on the radar grid
+- **Slimmed firmware** - removed the bundled large-airports dataset and runway-overlay feature
 
 ## What it does
 
-1. **Wi‑Fi setup** (if needed) — captive portal on AP **`PlaneRadar-Setup`**
-2. **Radar** — live aircraft from [adsb.fi](https://opendata.adsb.fi/) on a sonar-style grid
+1. **Wi‑Fi setup** (if needed) - captive portal on AP **`PlaneRadar-Setup`**
+2. **Radar** - live aircraft from [adsb.fi](https://opendata.adsb.fi/) on a sonar-style grid
 
 After Wi‑Fi is saved, the device reconnects automatically; the radar runs in the main loop with periodic ADS-B updates (~5 s).
 
@@ -39,7 +39,7 @@ During setup you can also hold BOOT at power-on to force a credential reset (sam
 ## Wi‑Fi setup portal
 
 1. Connect to **`PlaneRadar-Setup`**
-2. Open **`http://plane-radar.local`** (preferred) or **`http://192.168.4.1`** — both are shown on the yellow setup screen; captive portal may open automatically
+2. Open **`http://plane-radar.local`** (preferred) or **`http://192.168.4.1`** - both are shown on the yellow setup screen; captive portal may open automatically
 3. Set home Wi‑Fi, then save
 
 mDNS hostname is configured in `config.h` as `kPortalHostname` (`plane-radar` → **plane-radar.local** on the setup AP). Some phones resolve `.local` slowly; use the IP if needed.
@@ -76,16 +76,16 @@ Preset and miles/km choice persist across reboot (`planeradar` NVS namespace).
 
 ### Aircraft
 
-- **Inside the outer ring** — red heading triangle, magenta speed vector (clipped at the ring), callsign / type / altitude tags
-- **Outside the ring** (still within ADS-B fetch) — small **red dot on the screen rim** at the correct bearing (direction cue; not distance-accurate past the ring)
-- **Tags** — placed toward the **center**: west (left) → tag on the **right** of the symbol; east (right) → tag on the **left**
+- **Inside the outer ring** - red heading triangle, magenta speed vector (clipped at the ring), callsign / type / altitude tags
+- **Outside the ring** (still within ADS-B fetch) - small **red dot on the screen rim** at the correct bearing (direction cue; not distance-accurate past the ring)
+- **Tags** - placed toward the **center**: west (left) → tag on the **right** of the symbol; east (right) → tag on the **left**
 
 As range decreases (or aircraft approach), targets move inward; beyond-ring dots become full symbols when they cross the outer ring.
 
 ### ADS-B
 
 - Source: `https://opendata.adsb.fi/api/v3/`
-- Fetch radius: `ui::radar::fetchRadiusKm()` — scales with the active preset to roughly the screen edge (so rim dots have data)
+- Fetch radius: `ui::radar::fetchRadiusKm()` - scales with the active preset to roughly the screen edge (so rim dots have data)
 - Poll interval: `kAdsbFetchIntervalMs` (5 s) in `config.h`
 - Ground aircraft hidden by default (`kAdsbShowGroundAircraft`)
 
@@ -123,7 +123,7 @@ include/
     radar_location.h
     adsb_client.h
 data/
-  ui_font.vlw              — embedded smooth UI font (Noto Sans Bold)
+  ui_font.vlw              - embedded smooth UI font (Noto Sans Bold)
 src/
   main.cpp
   hardware/
