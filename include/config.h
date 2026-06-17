@@ -75,6 +75,7 @@ constexpr Airport kAirports[] = {
   {"MAN", 53.3539, -2.2750}, // Manchester
   {"STN", 51.8850, 0.2350},  // London Stansted
   {"LTN", 51.8747, -0.3683}, // London Luton
+  {"KECG", 36.2606, -76.1767} // ecity
   {"BHX", 52.4539, -1.7481}, // Birmingham
   {"BRS", 51.3828, -2.7192}, // Bristol
   {"NCL", 55.0375, -1.6917}, // Newcastle
